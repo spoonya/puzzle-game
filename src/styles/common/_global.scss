@@ -1,0 +1,100 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+a {
+  display: inline-block;
+
+  cursor: pointer;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+
+  width: 100%;
+  height: auto;
+}
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 400;
+
+  margin: 0;
+  padding: 0;
+}
+
+p {
+  margin: 0;
+}
+
+input {
+  font: inherit;
+
+  border: none;
+  outline: none;
+  background: none;
+}
+
+input[type='button'] {
+  padding: 0;
+
+  cursor: pointer;
+}
+
+button {
+  font: inherit;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  border: none;
+  outline: none;
+  background: none;
+}
+
+html {
+  font-size: 62.5%;
+
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: $font-primary;
+  font-size: 1.6em;
+
+  margin: 0;
+
+  color: $color-primary-dark;
+  background-color: #f6f6f6;
+  background-image: linear-gradient(315deg, #f6f6f6 0%, #e9e9e9 74%);
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 1200px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 15px;
+}
