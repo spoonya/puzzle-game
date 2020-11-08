@@ -1,1 +1,1 @@
-# Fifteen-Puzzle-Game
+# gem-puzzle

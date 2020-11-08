@@ -142,6 +142,16 @@ const config = {
             outputPath: 'fonts'
           }
         }]
+      },
+      {
+        test: /\.(ogg|mp3|wav|mpe?g)$/i,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            outputPath: 'assets',
+            name: '[name].[ext]'
+          }
+        }]
       }
     ]
   },

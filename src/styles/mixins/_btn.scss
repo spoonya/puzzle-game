@@ -1,0 +1,13 @@
+@mixin btn {
+  padding: .35em;
+
+  transition: background-color .1s linear;
+
+  color: $color-primary-light;
+  border-radius: 2px;
+  background-color: darken($color-secondary-light, 13);
+
+  &:hover {
+    background-color: darken($color-secondary-light, 15);
+  }
+}
