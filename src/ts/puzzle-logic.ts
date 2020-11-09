@@ -1,11 +1,11 @@
 import PuzzleDOM from './puzzle-dom';
 
-const puzzleDOM = new PuzzleDOM();
+const puzzleDOM: PuzzleDOM = new PuzzleDOM();
 
 export default class PuzzleLogic {
-  constructor(size: number) {
+  public newGame(size: number) {
     puzzleDOM.boardSize = size;
-    // puzzleDOM.createDOM();
+    puzzleDOM.createDOM();
     this._addEvtListeners();
   }
 
@@ -63,10 +63,10 @@ export default class PuzzleLogic {
       ];
 
       if (coords.itemCoords.col === coords.emptyCoords.col
-      && coords.itemCoords.row < coords.emptyCoords.row) {
+        && coords.itemCoords.row < coords.emptyCoords.row) {
         direction = toUp;
       } else if (coords.itemCoords.col === coords.emptyCoords.col
-      && coords.itemCoords.row > coords.emptyCoords.row) {
+        && coords.itemCoords.row > coords.emptyCoords.row) {
         direction = toDown;
       } else if (coords.itemCoords.col > coords.emptyCoords.col
         && coords.itemCoords.row === coords.emptyCoords.row) {
@@ -78,7 +78,7 @@ export default class PuzzleLogic {
       return direction;
     }
 
-    const swap = (item: HTMLElement, empty: HTMLElement) => {
+    const swap = (item: HTMLElement, empty: HTMLElement): void => {
       const itemParent = item.parentElement;
       const emptyParent = empty.parentElement;
 

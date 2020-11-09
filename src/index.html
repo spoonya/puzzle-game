@@ -12,16 +12,8 @@
 <body>
 	<div class="container">
 		<div class="puzzle-wrapper">
-			<header class="header">
-				<div class="stats">
-					<time class="stats__item">Time: <span data-header="time">01:12</span></time>
-					<div class="stats__item">Moves: <span data-header="moves">17</span></div>
-				</div>
-				<button class="header__btn" data-header="pause-resume">Menu</button>
-			</header>
-
-			<div class="menu menu--visible">
-				<div class="menu__item menu__item--visible" data-menu="main">
+			<!-- <div class="menu menu--visible">
+				<div class="menu__item menu__item--hidden" data-menu="main">
 					<button class="menu__nav-btn" data-menu-btn="btn-new">New game</button>
 					<button class="menu__nav-btn" data-menu-btn="btn-load">Load game</button>
 					<button class="menu__nav-btn" data-menu-btn="btn-save">Save game</button>
@@ -29,7 +21,7 @@
 					<button class="menu__nav-btn" data-menu-btn="btn-rules">Rules</button>
 					<button class="menu__nav-btn" data-menu-btn="btn-settings">Settings</button>
 				</div>
-				<div class="menu__item menu__item--hidden" data-menu="menu-saved">
+				<div class="menu__item menu__item--visible" data-menu="menu-saved">
 					<h3 class="menu__title">Load game</h3>
 					<div class="menu__content">
 						<table class="saves-table">
@@ -39,10 +31,10 @@
 								<th>Moves</th>
 							</tr>
 							<tr data-saves="save-row">
-								<td data-saves="save-date">12.10.2020</td>
-								<td data-saves="save-moves">100</td>
 								<td data-saves="save-size">4x4</td>
-								<td data-saves="save-time"><button class="save-load" data-saves-btn="load">Load</button></td>
+								<td data-saves="save-time">05:30</td>
+								<td data-saves="save-moves">100</td>
+								<td data-saves="save-btn"><button class="save-load" data-saves-btn="load">Load</button></td>
 							</tr>
 						</table>
 					</div>
@@ -83,12 +75,12 @@
 						<div class="menu__subitem">
 							<h4 class="menu__subtitle">Field size:</h4>
 							<select>
-								<option class="menu__option" value="3x3">3x3</option>
-								<option class="menu__option" value="4x4">4x4</option>
-								<option class="menu__option" value="5x5">5x5</option>
-								<option class="menu__option" value="6x6">6x6</option>
-								<option class="menu__option" value="7x7">7x7</option>
-								<option class="menu__option" value="8x8">8x8</option>
+								<option class="menu__option" value="3">3x3</option>
+								<option class="menu__option" value="4">4x4</option>
+								<option class="menu__option" value="5">5x5</option>
+								<option class="menu__option" value="6">6x6</option>
+								<option class="menu__option" value="7">7x7</option>
+								<option class="menu__option" value="8">8x8</option>
 							</select>
 						</div>
 						<div class="menu__subitem">
@@ -101,26 +93,7 @@
 					</div>
 					<button class="menu__back-btn" data-back-btn="btn-back">Back</button>
 				</div>
-			</div>
-
-			<div class="puzzle" style="grid-template-columns: repeat(4, 1fr);">
-				<div class="puzzle__item" id="9">9</div>
-				<div class="puzzle__item" id="15">15</div>
-				<div class="puzzle__item" id="5">5</div>
-				<div class="puzzle__item" id="3">3</div>
-				<div class="puzzle__item" id="11">11</div>
-				<div class="puzzle__empty" id="0"></div>
-				<div class="puzzle__item" id="13">13</div>
-				<div class="puzzle__item" id="12">12</div>
-				<div class="puzzle__item" id="4">4</div>
-				<div class="puzzle__item" id="2">2</div>
-				<div class="puzzle__item" id="1">1</div>
-				<div class="puzzle__item" id="7">7</div>
-				<div class="puzzle__item" id="6">6</div>
-				<div class="puzzle__item" id="10">10</div>
-				<div class="puzzle__item" id="8">8</div>
-				<div class="puzzle__item" id="14">14</div>
-			</div>
+			</div> -->
 		</div>
 	</div>
 </body>

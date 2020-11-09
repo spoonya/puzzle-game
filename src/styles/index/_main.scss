@@ -1,5 +1,8 @@
 .puzzle-wrapper {
   position: relative;
+
+  min-width: 50rem;
+  min-height: 55.6rem;
 }
 
 .puzzle {
@@ -46,7 +49,7 @@
 .menu {
   position: absolute;
   z-index: 1000;
-  top: 55px;
+  top: 56px;
   bottom: 0;
   left: 0;
 
@@ -73,6 +76,7 @@
 
 .menu__item {
   display: flex;
+  display: none;
   align-items: center;
   flex-direction: column;
   justify-content: center;
@@ -82,10 +86,6 @@
   color: $color-primary-light;
   &--visible {
     display: flex;
-  }
-
-  &--hidden {
-    display: none;
   }
 
   p {
@@ -222,5 +222,6 @@ label {
   min-width: 10.8rem;
   padding: .35em 1em;
 
+  user-select: none;
   text-transform: uppercase;
 }

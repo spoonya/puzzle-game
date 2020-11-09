@@ -1,8 +1,8 @@
 export default class PuzzleDOM {
   private _boardSize: number = 0;
-  private _container: HTMLElement = document.createElement('div');
   private _puzzleItem: HTMLElement = document.createElement('div');
   public puzzle: HTMLElement = document.createElement('div');
+  private _puzzleWrapper: HTMLElement | null = document.querySelector('.puzzle-wrapper');
   public numArr: number[] = [];
   public cellsArr: HTMLElement[] = [];
 
@@ -18,7 +18,7 @@ export default class PuzzleDOM {
     }
   }
 
-  public calcCoords(idx: any) {
+  public calcCoords(idx: number) {
     const puzzleWidth: number = this.puzzle.clientWidth;
     const puzzleItemWidth: number = puzzleWidth / this.boardSize;
     const totalCols: number = Math.floor(puzzleWidth / puzzleItemWidth);
@@ -44,7 +44,7 @@ export default class PuzzleDOM {
     return arr;
   }
 
-  private _isSovlable() {
+  private _isSovlable(): boolean {
     const puzzleLength: number = this.numArr.length - 1;
     let sum: number = 0;
     let zeroIdx: number = 0;
@@ -61,6 +61,7 @@ export default class PuzzleDOM {
       }
     }
 
+    //TODO: Check
     sum += this.calcCoords(zeroIdx).row;
     console.log(sum);
     return sum % 2 === 0;
@@ -71,13 +72,13 @@ export default class PuzzleDOM {
       this.puzzle.removeChild(this.puzzle.firstChild);
     }
 
+    this.cellsArr = [];
+
     this.puzzle.style.gridTemplateColumns = `repeat(${this.boardSize}, 1fr)`;
 
-    this._container.classList.add('container');
     this.puzzle.classList.add('puzzle');
 
-    document.body.append(this._container);
-    this._container.append(this.puzzle);
+    this._puzzleWrapper?.append(this.puzzle);
 
     do {
       this.numArr = this._createRandArray(this.boardSize);
