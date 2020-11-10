@@ -1,4 +1,4 @@
-import {puzzleLogic} from './index';
+import {header, puzzleLogic} from './index';
 
 export default class Menu {
   private _puzzleWrapper: HTMLElement | null = document.querySelector('.puzzle-wrapper');
@@ -30,11 +30,16 @@ export default class Menu {
   private _menuItemLabel: HTMLElement | null = null;
   private _menuSubitem: HTMLElement | null = null;
 
-  public createMenuAll(): void {
+  public menuSetup = {
+    class: 'menu',
+    visible: 'menu--visible'
+  }
+
+  public createMenu(): void {
     this._puzzleWrapper?.append(this.menu);
-    this.menu.classList.add('menu', 'menu--visible');
+    this.menu.classList.add(this.menuSetup.class, this.menuSetup.visible);
     this._menuBackBtn.classList.add('menu__back-btn');
-    this._menuBackBtn.setAttribute('data-menu-btn', 'btn-back');
+    this._menuBackBtn.setAttribute('id', 'btn-back');
     this._menuBackBtn.innerText = 'Back';
 
     const menuItemSetup = {
@@ -42,16 +47,15 @@ export default class Menu {
       modif: {
         visible: 'menu__item--visible'
       },
-      attrName: 'data-menu'
+      attrName: 'id'
     };
 
-    const createMenuItemCommon = (attrName: string, attrVal: string, title: string, modif?:string): void => {
-
+    const createMenuItemCommon = (attrName: string, attrVal: string, title: string, visible?:string): void => {
       this._menuItem = document.createElement('div');
       this._menuItemContent = document.createElement('div');
       this._menuItemTitle = document.createElement('h3');
 
-      modif ? this._menuItem.classList.add(modif) : false;
+      visible ? this._menuItem.classList.add(visible) : false;
 
       this._menuItem.classList.add(menuItemSetup.main);
       this._menuItem.setAttribute(attrName, attrVal);
@@ -62,7 +66,14 @@ export default class Menu {
 
       this._menuItem.append(this._menuItemTitle);
       this._menuItem.append(this._menuItemContent);
-      this._menuItem.append(this._menuBackBtn);
+      const cloneBtn = this._menuBackBtn.cloneNode(true);
+
+      cloneBtn.addEventListener('click', (): void => {
+        cloneBtn.parentElement?.classList.remove(menuItemSetup.modif.visible);
+        this.menuItemArr[0].classList.add(menuItemSetup.modif.visible);
+      });
+
+      this._menuItem.append(cloneBtn);
       this.menu.append(this._menuItem);
     }
 
@@ -70,9 +81,10 @@ export default class Menu {
       const menuMainSetup = {
         attrVal: 'main',
         btnClass: 'menu__nav-btn',
-        btnAttrName: 'data-menu-btn',
+        btnAttrName: 'id',
         btnSetup: [
           { btnAttrVal: 'btn-new', btnTxt: 'New game' },
+          { btnAttrVal: 'btn-resume', btnTxt: 'Continue', disabled: 'true'},
           { btnAttrVal: 'btn-load', btnTxt: 'Load game' },
           { btnAttrVal: 'btn-save', btnTxt: 'Save game' },
           { btnAttrVal: 'btn-scores', btnTxt: 'Best scores' },
@@ -92,6 +104,7 @@ export default class Menu {
 
         this._menuMainBtn.classList.add(menuMainSetup.btnClass);
         this._menuMainBtn.setAttribute(menuMainSetup.btnAttrName, menuMainSetup.btnSetup[i].btnAttrVal);
+        menuMainSetup.btnSetup[i].disabled ? this._menuMainBtn.setAttribute('disabled', 'true') : false;
         this._menuMainBtn.innerText = menuMainSetup.btnSetup[i].btnTxt;
 
         this._menuItem.append(this._menuMainBtn);
@@ -100,11 +113,41 @@ export default class Menu {
       }
 
       this.menuItemArr.push(this._menuItem);
-      this.menuMainBtnArr[0].addEventListener('click', () => {
-        this.menu.classList.remove('menu--visible');
+
+      this.menuMainBtnArr.filter(el => el.id === 'btn-new')[0].addEventListener('click', () => {
+        this.menu.classList.remove(this.menuSetup.visible);
+        header.headerBtn.removeAttribute('disabled');
         puzzleLogic.newGame(4);
       });
 
+      this.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].addEventListener('click', () => {
+        this.menu.classList.remove(this.menuSetup.visible);
+        header.startTime();
+      });
+
+      this.menuMainBtnArr.filter(el => el.id === 'btn-load')[0].addEventListener('click', () => {
+        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
+        this.menuItemArr[1].classList.add(menuItemSetup.modif.visible);
+      });
+
+      this.menuMainBtnArr.filter(el => el.id === 'btn-save')[0].addEventListener('click', () => {
+
+      });
+
+      this.menuMainBtnArr.filter(el => el.id === 'btn-scores')[0].addEventListener('click', () => {
+        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
+        this.menuItemArr[2].classList.add(menuItemSetup.modif.visible);
+      });
+
+      this.menuMainBtnArr.filter(el => el.id === 'btn-rules')[0].addEventListener('click', () => {
+        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
+        this.menuItemArr[3].classList.add(menuItemSetup.modif.visible);
+      });
+
+      this.menuMainBtnArr.filter(el => el.id === 'btn-settings')[0].addEventListener('click', () => {
+        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
+        this.menuItemArr[4].classList.add(menuItemSetup.modif.visible);
+      });
     }
 
     const createMenuLoad = (): void => {
@@ -112,7 +155,7 @@ export default class Menu {
         title: 'Load game',
         attrVal: 'menu-saved',
         tableClass: 'saves-table',
-        trAttrName: 'data-saves',
+        trAttrName: 'id',
         trArrtVal: 'save-row',
         tableHeader: [
           { th: 'Board size' },
@@ -282,11 +325,6 @@ export default class Menu {
 
       this.menuItemArr.push(this._menuItem);
     };
-
-    this._menuBackBtn.addEventListener('click', () => {
-      this._menuBackBtn.parentElement?.classList.remove(menuItemSetup.modif.visible);
-      this.menuItemArr[0].classList.add(menuItemSetup.modif.visible);
-    });
 
     createMenuMain();
     createMenuLoad();

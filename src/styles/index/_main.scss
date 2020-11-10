@@ -135,6 +135,7 @@
 .menu__nav-btn {
   font-size: 2.5rem;
 
+  user-select: none;
   transition: color .1s linear;
 
   color: $color-primary-light;
@@ -144,6 +145,12 @@
 
   &:not(:last-child) {
     margin-bottom: 2rem;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    color: darken($color-primary-light, 30);
   }
 }
 

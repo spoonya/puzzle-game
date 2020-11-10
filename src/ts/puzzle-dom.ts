@@ -62,12 +62,12 @@ export default class PuzzleDOM {
     }
 
     //TODO: Check
-    sum += this.calcCoords(zeroIdx).row;
+    this.boardSize % 2 === 0 ? sum += this.calcCoords(zeroIdx).row : false;
     console.log(sum);
     return sum % 2 === 0;
   }
 
-  public createDOM(): void {
+  public createPuzzle(): void {
     while (this.puzzle.firstChild) {
       this.puzzle.removeChild(this.puzzle.firstChild);
     }

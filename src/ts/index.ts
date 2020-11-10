@@ -4,13 +4,14 @@ import PuzzleLogic from './puzzle-logic';
 import Header from './header';
 import Menu from './menu';
 
-export const menu = new Menu();
-export const puzzleLogic  = new PuzzleLogic();
+export const menu: Menu = new Menu();
+export const puzzleLogic: PuzzleLogic  = new PuzzleLogic();
+export const header: Header = new Header();
 
 const puzzleInit = (size: number): void => {
-  puzzleLogic.newGame(size);
-  menu.createMenuAll();
-  new Header().createHeader();
+  header.createHeader();
+  menu.createMenu();
+  // puzzleLogic.newGame(size);
 };
 
-puzzleInit(4);
+puzzleInit(3);

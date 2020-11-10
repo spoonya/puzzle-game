@@ -1,12 +1,16 @@
 import PuzzleDOM from './puzzle-dom';
+import {header} from './index';
 
 const puzzleDOM: PuzzleDOM = new PuzzleDOM();
 
 export default class PuzzleLogic {
-  public newGame(size: number) {
+  public newGame(size: number): void {
     puzzleDOM.boardSize = size;
-    puzzleDOM.createDOM();
+    puzzleDOM.createPuzzle();
     this._addEvtListeners();
+    header.resetMoves();
+    header.resetTime();
+    header.startTime();
   }
 
   private _move(item: HTMLElement): void {
@@ -30,7 +34,7 @@ export default class PuzzleLogic {
       return indexes;
     };
 
-    const moveSound = (isMute: boolean = true) => {
+    const soundMove = (isMute: boolean = true) => {
       const audio = new Audio();
       audio.volume = 0.3;
 
@@ -84,7 +88,7 @@ export default class PuzzleLogic {
 
       item.animate(
         chooseAnime(), {
-        duration: 250,
+        duration: 200,
         easing: 'ease-in-out',
         iterations: 1
       });
@@ -123,8 +127,9 @@ export default class PuzzleLogic {
       + Math.abs(coords.itemCoords.row - coords.emptyCoords.row) > 1) {
       return;
     } else {
-      moveSound();
+      soundMove();
       swap(item, empty);
+      header.countMoves();
     }
   }
 
