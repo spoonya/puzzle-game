@@ -1,9 +1,10 @@
 export default class PuzzleDOM {
   private _boardSize: number = 0;
-  private _puzzleItem: HTMLElement = document.createElement('div');
+  private _puzzleItem: HTMLElement | null = null;
   public puzzle: HTMLElement = document.createElement('div');
   private _puzzleWrapper: HTMLElement | null = document.querySelector('.puzzle-wrapper');
   public numArr: number[] = [];
+  public solvedNumArr: number[] = [];
   public cellsArr: HTMLElement[] = [];
 
   public get boardSize() {
@@ -29,7 +30,7 @@ export default class PuzzleDOM {
     }
   };
 
-  private _createRandArray(arrLength: number): number[] {
+  private _createRandArray(arrLength: number, isForInitScreen = false): number[] {
     const arr: number[] = [];
     arrLength = Math.pow(arrLength, 2);
 
@@ -37,10 +38,16 @@ export default class PuzzleDOM {
       arr[i] = i;
     }
 
-    for (let i = arrLength - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+    this.solvedNumArr = arr.slice();
+    this.solvedNumArr.push(this.solvedNumArr.splice(0, 1)[0]);
+
+    if (!isForInitScreen) {
+      for (let i = arrLength - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
     }
+
     return arr;
   }
 
@@ -61,16 +68,18 @@ export default class PuzzleDOM {
       }
     }
 
-    //TODO: Check
     this.boardSize % 2 === 0 ? sum += this.calcCoords(zeroIdx).row : false;
-    console.log(sum);
     return sum % 2 === 0;
   }
 
-  public createPuzzle(): void {
+  private _cleanBoard(): void {
     while (this.puzzle.firstChild) {
       this.puzzle.removeChild(this.puzzle.firstChild);
     }
+  }
+
+  public createPuzzle(): void {
+    this._cleanBoard();
 
     this.cellsArr = [];
 
@@ -87,6 +96,8 @@ export default class PuzzleDOM {
     const arrLength = this.numArr.length;
 
     for (let i = 0; i < arrLength; i++) {
+      this._puzzleItem = document.createElement('div');
+
       if (this.numArr[i] === 0) {
         this._puzzleItem.classList.add('puzzle__empty');
       } else {
@@ -99,8 +110,31 @@ export default class PuzzleDOM {
       this.puzzle.append(this._puzzleItem);
 
       this.cellsArr.push(this._puzzleItem);
+    }
+  }
 
+  public createInitScreen(): void {
+    this._cleanBoard();
+
+    this._createRandArray(4, true);
+
+    this.puzzle.style.gridTemplateColumns = `repeat(4, 1fr)`;
+
+    this.puzzle.classList.add('puzzle');
+
+    this._puzzleWrapper?.append(this.puzzle);
+
+    for (let i = 0; i < this.solvedNumArr.length; i++) {
       this._puzzleItem = document.createElement('div');
+
+      if (this.solvedNumArr[i] === 0) {
+        this._puzzleItem.classList.add('puzzle__empty');
+      } else {
+        this._puzzleItem.classList.add('puzzle__item');
+        this._puzzleItem.innerText = (this.solvedNumArr[i]).toString();
+      }
+
+      this.puzzle.append(this._puzzleItem);
     }
   }
 }

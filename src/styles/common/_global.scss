@@ -80,6 +80,10 @@ button {
   border: none;
   outline: none;
   background: none;
+  text-shadow: inherit;
+  // &:focus {
+  //   box-shadow: 0 0 0 3px #159ce466;
+  // }
 }
 
 select {
@@ -122,10 +126,13 @@ body {
 
   margin: 0;
 
+  user-select: none;
+  letter-spacing: 1px;
+
   color: $color-primary-dark;
   background-color: #f6f6f6;
   background-image: linear-gradient(315deg, #f6f6f6 0%, #e9e9e9 74%);
-  text-shadow: 1px 1px 2px #000;
+  text-shadow: 0 1px 2px #000;
 }
 
 .container {

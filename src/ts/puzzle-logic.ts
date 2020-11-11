@@ -1,7 +1,5 @@
-import PuzzleDOM from './puzzle-dom';
-import {header} from './index';
-
-const puzzleDOM: PuzzleDOM = new PuzzleDOM();
+import {header, menu} from './index';
+import {puzzleDOM} from './index';
 
 export default class PuzzleLogic {
   public newGame(size: number): void {
@@ -34,14 +32,13 @@ export default class PuzzleLogic {
       return indexes;
     };
 
-    const soundMove = (isMute: boolean = true) => {
-      const audio = new Audio();
-      audio.volume = 0.3;
+    // const soundMove = () => {
+    //   if (menu.isMute) return;
 
-      audio.src = '../assets/move.mp3';
-
-      !isMute ? audio.play() : false;
-    };
+    //   menu.audio.volume = 0.2;
+    //   menu.audio.src = '../assets/move.mp3';
+    //   menu.audio.play();
+    // };
 
     const chooseAnime = () => {
       let direction;
@@ -127,15 +124,34 @@ export default class PuzzleLogic {
       + Math.abs(coords.itemCoords.row - coords.emptyCoords.row) > 1) {
       return;
     } else {
-      soundMove();
+      menu.audioSettings.soundOfMove.activate();
       swap(item, empty);
       header.countMoves();
+      this._isSolved() ? this._resetGame() : false;
     }
   }
 
-  private _addEvtListeners() {
+  private _isSolved(): boolean {
+    const unsolvedNumArr: number[] = [];
+    puzzleDOM.puzzle.querySelectorAll('div').forEach((el) => {
+      unsolvedNumArr.push(parseInt(el.id));
+    });
+
+    return JSON.stringify(puzzleDOM.solvedNumArr) === JSON.stringify(unsolvedNumArr);
+  }
+
+  private _resetGame(): void {
+    header.resetMoves();
+    header.resetTime();
+    header.deactivateMenuBtn();
+    puzzleDOM.createInitScreen();
+    menu.deactivateResumeBtn();
+    menu.showMainMenu();
+  }
+
+  private _addEvtListeners(): void {
     puzzleDOM.cellsArr.forEach((item) => {
-      item.addEventListener('click', () => {
+      item.addEventListener('mousedown', () => {
         if (item.id !== '0') {
           this._move(item);
         }

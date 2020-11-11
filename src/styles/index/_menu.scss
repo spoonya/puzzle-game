@@ -1,51 +1,3 @@
-.puzzle-wrapper {
-  position: relative;
-
-  min-width: 50rem;
-  min-height: 55.6rem;
-}
-
-.puzzle {
-  display: grid;
-
-  min-width: 50rem;
-  min-height: 50rem;
-
-  background-color: $color-primary-dark;
-  box-shadow: 0 0 3px #000;
-
-  grid-auto-rows: 1fr;
-  gap: .2rem;
-}
-
-.puzzle__item {
-  font-size: 3rem;
-  font-weight: 600;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  cursor: pointer;
-  user-select: none;
-  transition: transform .1s linear, background-color .1s linear;
-
-  color: $color-primary-light;
-  background-color: $color-secondary-dark;
-  &--hold {
-    opacity: 1;
-    border: 1px solid $color-secondary-dark;
-  }
-
-  &--invis {
-    opacity: 0;
-  }
-
-  &:hover {
-    background-color: lighten($color-secondary-dark, 10);
-  }
-}
-
 .menu {
   position: absolute;
   z-index: 1000;
@@ -63,6 +15,27 @@
 
   &--visible {
     display: flex;
+  }
+}
+
+.menu__nav-btn {
+  font-size: 2.5rem;
+
+  transition: color .1s linear;
+
+  color: $color-primary-light;
+  &:hover {
+    color: lighten($color-secondary-light, 5);
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 2rem;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    color: darken($color-primary-light, 30);
   }
 }
 
@@ -132,28 +105,6 @@
   }
 }
 
-.menu__nav-btn {
-  font-size: 2.5rem;
-
-  user-select: none;
-  transition: color .1s linear;
-
-  color: $color-primary-light;
-  &:hover {
-    color: lighten($color-secondary-light, 5);
-  }
-
-  &:not(:last-child) {
-    margin-bottom: 2rem;
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-
-    color: darken($color-primary-light, 30);
-  }
-}
-
 .menu__subitem {
   display: flex;
   align-items: center;
@@ -173,7 +124,6 @@ label {
   font-size: 1.8rem;
 
   cursor: pointer;
-  user-select: none;
 }
 
 .records-table,
@@ -183,7 +133,9 @@ label {
   border-spacing: 5px;
   border-collapse: separate;
 
-  td {
+  td,
+  th,
+  tr {
     width: 15rem;
     padding: .5rem;
 
@@ -197,38 +149,4 @@ label {
 
 .save-load {
   @include btn;
-}
-
-.header {
-  display: flex;
-  justify-content: space-between;
-
-  margin-bottom: 1rem;
-
-  text-transform: uppercase;
-
-  text-shadow: none;
-}
-
-.stats__item {
-  font-weight: 600;
-
-  display: block;
-  &:not(:last-child) {
-    margin-bottom: 1rem;
-  }
-
-  span {
-    font-weight: 400;
-  }
-}
-
-.header__btn {
-  @include btn;
-
-  min-width: 10.8rem;
-  padding: .35em 1em;
-
-  user-select: none;
-  text-transform: uppercase;
 }

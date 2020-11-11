@@ -46,7 +46,18 @@ export default class Header {
     this._statsMoves.innerText = '0';
     this.headerBtn.innerText = 'Menu';
 
-    this.headerBtn.addEventListener('click', () => this._pauseGame());
+    this.headerBtn.addEventListener('click', () => {
+      this._pauseGame();
+      this.headerBtn.blur();
+    });
+  }
+
+  public activateMenuBtn(): void {
+    this.headerBtn.removeAttribute('disabled');
+  }
+
+  public deactivateMenuBtn(): void {
+    this.headerBtn.setAttribute('disabled', 'true');
   }
 
   private _formatTime(time: any): string {
@@ -70,7 +81,7 @@ export default class Header {
     this._timerInterval = setInterval(() => {
       this._elapsedTime = Date.now() - this._startTime;
       this._statsTime.innerText = this._formatTime(this._elapsedTime);
-    }, 1000);
+    }, 10);
   }
 
   private _pauseTime(): void {
@@ -83,18 +94,18 @@ export default class Header {
     this._elapsedTime = 0;
   }
 
-  public countMoves() {
+  public countMoves(): void {
     this._statsMoves.innerText = (++this._movesCount).toString();
   }
 
-  public resetMoves() {
+  public resetMoves(): void {
     this._movesCount = 0;
     this._statsMoves.innerText = this._movesCount.toString();
   }
 
-  private _pauseGame() {
+  private _pauseGame(): void {
     this._pauseTime();
-    menu.menu.classList.add(menu.menuSetup.visible);
-    menu.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].removeAttribute('disabled');
+    menu.showMainMenu();
+    menu.activateResumeBtn();
   }
 }

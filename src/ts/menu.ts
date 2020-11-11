@@ -24,15 +24,67 @@ export default class Menu {
   private _menuItemTxt: HTMLElement | null = null;
   private _menuItemSubtitle: HTMLElement | null = null;
 
-  private _menuItemSelect: HTMLElement | null = null;
+  private _menuItemSelect: any= null;
   private _menuItemOption: HTMLElement | null = null;
   private _menuItemInput: HTMLElement | null = null;
   private _menuItemLabel: HTMLElement | null = null;
   private _menuSubitem: HTMLElement | null = null;
 
+  //FIXME: Uncaught (in promise)
+  public audioSettings = {
+    soundOfMove: {
+      audio: new Audio(),
+      isMute: false,
+      path: '../assets/move.mp3',
+      activate() {
+        if (this.isMute) return;
+        this.audio.src = this.path;
+        this.audio.load();
+        this.audio.volume = 0.2;
+        this.audio.play();
+
+        // this.fetchAndPlay();
+      },
+      // fetchAndPlay() {
+      //   fetch(this.path)
+      //   .then(response => response.blob())
+      //   .then(blob => {
+      //     this.audio.srcObject = blob;
+      //     return this.audio.play();
+      //   })
+      //   .then(_ => {
+
+      //   })
+      //   .catch(e => {
+      //   })
+      // }
+    }
+  }
+
   public menuSetup = {
     class: 'menu',
     visible: 'menu--visible'
+  }
+
+  public menuItemSetup = {
+    main: 'menu__item',
+    modif: {
+      visible: 'menu__item--visible'
+    },
+    attrName: 'id'
+  };
+
+  public activateResumeBtn(): void {
+    this.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].removeAttribute('disabled');
+  }
+
+  public deactivateResumeBtn(): void {
+    this.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].setAttribute('disabled', 'true');
+  }
+
+  public showMainMenu(): void {
+    this.menu.classList.add(this.menuSetup.visible);
+    this.menuItemArr[0].classList.add(this.menuItemSetup.modif.visible);
   }
 
   public createMenu(): void {
@@ -42,22 +94,14 @@ export default class Menu {
     this._menuBackBtn.setAttribute('id', 'btn-back');
     this._menuBackBtn.innerText = 'Back';
 
-    const menuItemSetup = {
-      main: 'menu__item',
-      modif: {
-        visible: 'menu__item--visible'
-      },
-      attrName: 'id'
-    };
-
-    const createMenuItemCommon = (attrName: string, attrVal: string, title: string, visible?:string): void => {
+    const createMenuItemCommon = (attrName: string, attrVal: string, title: string, visible?: string): void => {
       this._menuItem = document.createElement('div');
       this._menuItemContent = document.createElement('div');
       this._menuItemTitle = document.createElement('h3');
 
       visible ? this._menuItem.classList.add(visible) : false;
 
-      this._menuItem.classList.add(menuItemSetup.main);
+      this._menuItem.classList.add(this.menuItemSetup.main);
       this._menuItem.setAttribute(attrName, attrVal);
       this._menuItemContent.classList.add('menu__content');
       this._menuItemTitle.classList.add('menu__title');
@@ -69,14 +113,15 @@ export default class Menu {
       const cloneBtn = this._menuBackBtn.cloneNode(true);
 
       cloneBtn.addEventListener('click', (): void => {
-        cloneBtn.parentElement?.classList.remove(menuItemSetup.modif.visible);
-        this.menuItemArr[0].classList.add(menuItemSetup.modif.visible);
+        cloneBtn.parentElement?.classList.remove(this.menuItemSetup.modif.visible);
+        this.menuItemArr[0].classList.add(this.menuItemSetup.modif.visible);
       });
 
       this._menuItem.append(cloneBtn);
       this.menu.append(this._menuItem);
     }
 
+    //Main
     const createMenuMain = (): void => {
       const menuMainSetup = {
         attrVal: 'main',
@@ -94,9 +139,9 @@ export default class Menu {
       };
 
       this._menuItem = document.createElement('div');
-      this._menuItem.classList.add(menuItemSetup.main);
-      this._menuItem.classList.add(menuItemSetup.modif.visible);
-      this._menuItem.setAttribute(menuItemSetup.attrName, menuMainSetup.attrVal);
+      this._menuItem.classList.add(this.menuItemSetup.main);
+      this._menuItem.classList.add(this.menuItemSetup.modif.visible);
+      this._menuItem.setAttribute(this.menuItemSetup.attrName, menuMainSetup.attrVal);
       this.menu.append(this._menuItem);
 
       for (let i = 0; i < menuMainSetup.btnSetup.length; i++) {
@@ -114,10 +159,17 @@ export default class Menu {
 
       this.menuItemArr.push(this._menuItem);
 
+      this.menuMainBtnArr.forEach((el) => {
+        el.addEventListener('click', () => {
+          this.menuItemArr[0].classList.remove(this.menuItemSetup.modif.visible);
+        });
+      });
+
+      //Start new game
       this.menuMainBtnArr.filter(el => el.id === 'btn-new')[0].addEventListener('click', () => {
         this.menu.classList.remove(this.menuSetup.visible);
         header.headerBtn.removeAttribute('disabled');
-        puzzleLogic.newGame(4);
+        puzzleLogic.newGame(parseInt(this._menuItemSelect?.value));
       });
 
       this.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].addEventListener('click', () => {
@@ -126,8 +178,7 @@ export default class Menu {
       });
 
       this.menuMainBtnArr.filter(el => el.id === 'btn-load')[0].addEventListener('click', () => {
-        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
-        this.menuItemArr[1].classList.add(menuItemSetup.modif.visible);
+        this.menuItemArr[1].classList.add(this.menuItemSetup.modif.visible);
       });
 
       this.menuMainBtnArr.filter(el => el.id === 'btn-save')[0].addEventListener('click', () => {
@@ -135,21 +186,19 @@ export default class Menu {
       });
 
       this.menuMainBtnArr.filter(el => el.id === 'btn-scores')[0].addEventListener('click', () => {
-        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
-        this.menuItemArr[2].classList.add(menuItemSetup.modif.visible);
+        this.menuItemArr[2].classList.add(this.menuItemSetup.modif.visible);
       });
 
       this.menuMainBtnArr.filter(el => el.id === 'btn-rules')[0].addEventListener('click', () => {
-        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
-        this.menuItemArr[3].classList.add(menuItemSetup.modif.visible);
+        this.menuItemArr[3].classList.add(this.menuItemSetup.modif.visible);
       });
 
       this.menuMainBtnArr.filter(el => el.id === 'btn-settings')[0].addEventListener('click', () => {
-        this.menuItemArr[0].classList.remove(menuItemSetup.modif.visible);
-        this.menuItemArr[4].classList.add(menuItemSetup.modif.visible);
+        this.menuItemArr[4].classList.add(this.menuItemSetup.modif.visible);
       });
     }
 
+    //Load
     const createMenuLoad = (): void => {
       const menuLoadSetup = {
         title: 'Load game',
@@ -164,7 +213,7 @@ export default class Menu {
         ]
       };
 
-      createMenuItemCommon(menuItemSetup.attrName, menuLoadSetup.attrVal, menuLoadSetup.title);
+      createMenuItemCommon(this.menuItemSetup.attrName, menuLoadSetup.attrVal, menuLoadSetup.title);
 
       this._menuTable = document.createElement('table');
       this._menuTable.classList.add(menuLoadSetup.tableClass);
@@ -185,12 +234,13 @@ export default class Menu {
       this.menuItemArr.push(this._menuItem);
     };
 
+    //Scores
     const createMenuScores = (): void => {
       const menuScoresSetup = {
         title: 'Best scores',
         attrVal: 'menu-scores',
-        tableClass: 'record-table',
-        trAttrName: 'data-record',
+        tableClass: 'records-table',
+        trAttrName: 'id',
         trArrtVal: 'record-row',
         tableHeader: [
           { th: 'Date' },
@@ -200,7 +250,7 @@ export default class Menu {
         ]
       };
 
-      createMenuItemCommon(menuItemSetup.attrName, menuScoresSetup.attrVal, menuScoresSetup.title);
+      createMenuItemCommon(this.menuItemSetup.attrName, menuScoresSetup.attrVal, menuScoresSetup.title);
 
       this._menuTable = document.createElement('table');
       this._menuTable.classList.add(menuScoresSetup.tableClass);
@@ -221,6 +271,7 @@ export default class Menu {
       this.menuItemArr.push(this._menuItem);
     };
 
+    //Rules
     const createMenuRules = (): void => {
       const menuRulesSetup = {
         title: 'Rules',
@@ -228,7 +279,7 @@ export default class Menu {
         txt: 'The object of the puzzle is to place the tiles in order by making sliding moves that use the empty space. You can save your game and load it later. Or you can just use pause button. Also you can choose game field size in Settings.'
       };
 
-      createMenuItemCommon(menuItemSetup.attrName, menuRulesSetup.attrVal, menuRulesSetup.title);
+      createMenuItemCommon(this.menuItemSetup.attrName, menuRulesSetup.attrVal, menuRulesSetup.title);
 
       this._menuItemTxt = document.createElement('p');
       this._menuItemTxt.innerText = menuRulesSetup.txt;
@@ -237,6 +288,7 @@ export default class Menu {
       this.menuItemArr.push(this._menuItem);
     };
 
+    //Settings
     const createMenuSettings = (): void => {
       const menuSettingsSetup = {
         title: 'Settings',
@@ -245,7 +297,7 @@ export default class Menu {
           title: 'Field size: ',
           option: [
             { class: 'menu__option', attrVal: '3', txt: '3x3' },
-            { class: 'menu__option', attrVal: '4', txt: '4x4' },
+            { class: 'menu__option', attrVal: '4', txt: '4x4', selected: 'selected' },
             { class: 'menu__option', attrVal: '5', txt: '5x5' },
             { class: 'menu__option', attrVal: '6', txt: '6x6' },
             { class: 'menu__option', attrVal: '7', txt: '7x7' },
@@ -257,12 +309,12 @@ export default class Menu {
           option: [
             {
               label: { for: 'sound-on' },
-              input: { type: 'radio', id: 'sound-on', name: 'sound', value: 'on'},
+              input: { type: 'radio', id: 'sound-on', name: 'sound', value: false, checked: true },
               txt: 'On'
             },
             {
               label: { for: 'sound-off' },
-              input: { type: 'radio', id: 'sound-off', name: 'sound', value: 'off', checked: ''},
+              input: { type: 'radio', id: 'sound-off', name: 'sound', value: true },
               txt: 'Off'
             }
           ]
@@ -282,31 +334,31 @@ export default class Menu {
         this._menuItemSubtitle.innerText = title;
       };
 
-      const setAttributes = (el: HTMLElement, attrs: any):void => {
+      const setAttributes = (el: HTMLElement, attrs: any): void => {
         for (let key in attrs) {
           el.setAttribute(key, attrs[key]);
         }
       };
 
-      createMenuItemCommon(menuItemSetup.attrName, menuSettingsSetup.attrVal, menuSettingsSetup.title);
+      createMenuItemCommon(this.menuItemSetup.attrName, menuSettingsSetup.attrVal, menuSettingsSetup.title);
 
+      //Init size option
       for (let i = 0; i < menuSettingsSetup.size.option.length; i++) {
         if (i === 0) {
           createSubItemCommon(menuSettingsSetup.size.title);
-
           this._menuItemSelect = document.createElement('select');
-
           this._menuSubitem?.append(this._menuItemSelect);
         }
 
         this._menuItemOption = document.createElement('option');
         this._menuItemOption.classList.add(menuSettingsSetup.size.option[i].class);
-        this._menuItemOption.setAttribute('value', menuSettingsSetup.size.option[i].attrVal);
+        setAttributes(this._menuItemOption, menuSettingsSetup.size.option[i]);
         this._menuItemOption.innerText = menuSettingsSetup.size.option[i].txt;
 
         this._menuItemSelect?.append(this._menuItemOption);
       }
 
+      //Init sound option
       for (let i = 0; i < menuSettingsSetup.sound.option.length; i++) {
         if (i === 0) {
           createSubItemCommon(menuSettingsSetup.sound.title);
@@ -317,11 +369,26 @@ export default class Menu {
         setAttributes(this._menuItemInput, menuSettingsSetup.sound.option[i].input);
         setAttributes(this._menuItemLabel, menuSettingsSetup.sound.option[i].label);
 
+        if (menuSettingsSetup.sound.option[i].input.checked) {
+          this.audioSettings.soundOfMove.isMute = menuSettingsSetup.sound.option[i].input.value;
+        }
+
         this._menuItemLabel.innerText = menuSettingsSetup.sound.option[i].txt;
 
         this._menuSubitem?.append(this._menuItemInput);
         this._menuSubitem?.append(this._menuItemLabel);
       }
+
+      //Turn on/off sound
+      document.getElementsByName('sound').forEach((el) => {
+        el.addEventListener('click', () => {
+          if (el.id === 'sound-on') {
+            this.audioSettings.soundOfMove.isMute = false;
+          } else {
+            this.audioSettings.soundOfMove.isMute = true;
+          }
+        });
+      });
 
       this.menuItemArr.push(this._menuItem);
     };
