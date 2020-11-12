@@ -5,9 +5,9 @@
 
   color: $color-primary-light;
   border-radius: 2px;
-  background-color: darken($color-secondary-light, 13);
+  background-color: darken($color-secondary-light, 10);
 
   &:hover {
-    background-color: darken($color-secondary-light, 15);
+    background-color: darken($color-secondary-light, 13);
   }
 }

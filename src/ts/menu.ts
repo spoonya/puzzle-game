@@ -1,4 +1,5 @@
-import {header, puzzleLogic} from './index';
+import { header, puzzleDOM, puzzleLogic } from './index';
+import Modal from './modal';
 
 export default class Menu {
   private _puzzleWrapper: HTMLElement | null = document.querySelector('.puzzle-wrapper');
@@ -30,6 +31,9 @@ export default class Menu {
   private _menuItemLabel: HTMLElement | null = null;
   private _menuSubitem: HTMLElement | null = null;
 
+  private _saves: string | null = window.localStorage.getItem('saves');
+  private _savesArr: any[] = [];
+
   //FIXME: Uncaught (in promise)
   public audioSettings = {
     soundOfMove: {
@@ -39,12 +43,11 @@ export default class Menu {
       activate() {
         if (this.isMute) return;
         this.audio.src = this.path;
-        this.audio.load();
         this.audio.volume = 0.2;
         this.audio.play();
-
         // this.fetchAndPlay();
       },
+
       // fetchAndPlay() {
       //   fetch(this.path)
       //   .then(response => response.blob())
@@ -63,7 +66,9 @@ export default class Menu {
 
   public menuSetup = {
     class: 'menu',
-    visible: 'menu--visible'
+    modif: {
+      visible: 'menu--visible'
+    }
   }
 
   public menuItemSetup = {
@@ -82,14 +87,22 @@ export default class Menu {
     this.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].setAttribute('disabled', 'true');
   }
 
+  public activateSaveBtn(): void {
+    this.menuMainBtnArr.filter(el => el.id === 'btn-save')[0].removeAttribute('disabled');
+  }
+
+  public deactivateSaveBtn(): void {
+    this.menuMainBtnArr.filter(el => el.id === 'btn-save')[0].setAttribute('disabled', 'true');
+  }
+
   public showMainMenu(): void {
-    this.menu.classList.add(this.menuSetup.visible);
+    this.menu.classList.add(this.menuSetup.modif.visible);
     this.menuItemArr[0].classList.add(this.menuItemSetup.modif.visible);
   }
 
   public createMenu(): void {
     this._puzzleWrapper?.append(this.menu);
-    this.menu.classList.add(this.menuSetup.class, this.menuSetup.visible);
+    this.menu.classList.add(this.menuSetup.class, this.menuSetup.modif.visible);
     this._menuBackBtn.classList.add('menu__back-btn');
     this._menuBackBtn.setAttribute('id', 'btn-back');
     this._menuBackBtn.innerText = 'Back';
@@ -131,7 +144,7 @@ export default class Menu {
           { btnAttrVal: 'btn-new', btnTxt: 'New game' },
           { btnAttrVal: 'btn-resume', btnTxt: 'Continue', disabled: 'true'},
           { btnAttrVal: 'btn-load', btnTxt: 'Load game' },
-          { btnAttrVal: 'btn-save', btnTxt: 'Save game' },
+          { btnAttrVal: 'btn-save', btnTxt: 'Save game', disabled: 'true'},
           { btnAttrVal: 'btn-scores', btnTxt: 'Best scores' },
           { btnAttrVal: 'btn-rules', btnTxt: 'Rules' },
           { btnAttrVal: 'btn-settings', btnTxt: 'Settings' },
@@ -160,39 +173,106 @@ export default class Menu {
       this.menuItemArr.push(this._menuItem);
 
       this.menuMainBtnArr.forEach((el) => {
-        el.addEventListener('click', () => {
-          this.menuItemArr[0].classList.remove(this.menuItemSetup.modif.visible);
-        });
+        if (el.id !== 'btn-save') {
+          el.addEventListener('click', () => {
+            this.menuItemArr[0].classList.remove(this.menuItemSetup.modif.visible);
+          });
+        }
       });
 
       //Start new game
       this.menuMainBtnArr.filter(el => el.id === 'btn-new')[0].addEventListener('click', () => {
-        this.menu.classList.remove(this.menuSetup.visible);
+        this.menu.classList.remove(this.menuSetup.modif.visible);
         header.headerBtn.removeAttribute('disabled');
         puzzleLogic.newGame(parseInt(this._menuItemSelect?.value));
       });
 
+      //Resume game
       this.menuMainBtnArr.filter(el => el.id === 'btn-resume')[0].addEventListener('click', () => {
-        this.menu.classList.remove(this.menuSetup.visible);
+        this.menu.classList.remove(this.menuSetup.modif.visible);
         header.startTime();
       });
 
+      //Open saves
       this.menuMainBtnArr.filter(el => el.id === 'btn-load')[0].addEventListener('click', () => {
+        //Fill table
+        const savesTable = document.querySelector('.saves-table');
+        while (savesTable?.firstChild) {
+          savesTable.removeChild(savesTable?.firstChild);
+        }
+
+        for (let i = 0; i < this._savesArr.length; i++) {
+          this._menuTableRow = document.createElement('tr');
+          document.querySelector('.saves-table')?.append(this._menuTableRow);
+
+          this._menuTableTd = document.createElement('td');
+          this._menuTableTd.innerText = this._savesArr[i].boardSizeTxt;
+          this._menuTableRow.append(this._menuTableTd);
+
+          this._menuTableTd = document.createElement('td');
+          this._menuTableTd.innerText = this._savesArr[i].time;
+          this._menuTableRow.append(this._menuTableTd);
+
+          this._menuTableTd = document.createElement('td');
+          this._menuTableTd.innerText = this._savesArr[i].moves;
+          this._menuTableRow.append(this._menuTableTd);
+
+          this._menuTableTd = document.createElement('td');
+          this._menuTableBtn = document.createElement('button');
+          this._menuTableBtn.classList.add('btn-load');
+          this._menuTableBtn.setAttribute('id', this._savesArr[i].id);
+          this._menuTableBtn.innerText = 'Load';
+
+          this._menuTableBtn.addEventListener('click', () => {
+            const curSave = this._savesArr.find((el) => el.id == this._savesArr[i].id);
+            puzzleLogic.loadGame(curSave);
+            this.menu.classList.remove(this.menuSetup.modif.visible);
+            this.menuItemArr.filter((el: { id: string; }) => el.id === 'menu-saved')[0]
+            .classList.remove(this.menuItemSetup.modif.visible);
+
+            header.headerBtn.removeAttribute('disabled');
+          });
+
+          this._menuTableRow.append(this._menuTableBtn);
+        }
+
         this.menuItemArr[1].classList.add(this.menuItemSetup.modif.visible);
       });
 
+      //Save game
       this.menuMainBtnArr.filter(el => el.id === 'btn-save')[0].addEventListener('click', () => {
+        const save = {
+          id: 0,
+          boardSizeInt: puzzleDOM.boardSize,
+          boardSizeTxt: `${puzzleDOM.boardSize}x${puzzleDOM.boardSize}`,
+          time: header.elapsedTime,
+          moves: header.movesCount,
+          numArr: puzzleLogic.unsolvedNumArr
+        }
 
+        if (this._saves !== null) {
+          save.id = JSON.parse(this._saves).length;
+        }
+
+        this._savesArr.push(save);
+        window.localStorage.setItem('saves', JSON.stringify(this._savesArr));
+
+        this._saves = window.localStorage.getItem('saves');
+
+        new Modal(Modal.alertType.onGameSave).showAlert().closeAlert(3000);
       });
 
+      //Open scores
       this.menuMainBtnArr.filter(el => el.id === 'btn-scores')[0].addEventListener('click', () => {
         this.menuItemArr[2].classList.add(this.menuItemSetup.modif.visible);
       });
 
+      //Open rules
       this.menuMainBtnArr.filter(el => el.id === 'btn-rules')[0].addEventListener('click', () => {
         this.menuItemArr[3].classList.add(this.menuItemSetup.modif.visible);
       });
 
+      //Open settings
       this.menuMainBtnArr.filter(el => el.id === 'btn-settings')[0].addEventListener('click', () => {
         this.menuItemArr[4].classList.add(this.menuItemSetup.modif.visible);
       });
@@ -200,6 +280,10 @@ export default class Menu {
 
     //Load
     const createMenuLoad = (): void => {
+      if (this._saves !== null) {
+        this._savesArr = JSON.parse(this._saves);
+      }
+
       const menuLoadSetup = {
         title: 'Load game',
         attrVal: 'menu-saved',
@@ -220,6 +304,7 @@ export default class Menu {
       this._menuTableRow = document.createElement('tr');
       this._menuTableRow.setAttribute(menuLoadSetup.trAttrName, menuLoadSetup.trArrtVal);
 
+      //Create header
       for (let i = 0; i < menuLoadSetup.tableHeader.length; i++) {
         this._menuTableTh = document.createElement('th');
 
@@ -296,8 +381,8 @@ export default class Menu {
         size: {
           title: 'Field size: ',
           option: [
-            { class: 'menu__option', attrVal: '3', txt: '3x3' },
-            { class: 'menu__option', attrVal: '4', txt: '4x4', selected: 'selected' },
+            { class: 'menu__option', attrVal: '3', txt: '3x3', selected: 'selected'},
+            { class: 'menu__option', attrVal: '4', txt: '4x4' },
             { class: 'menu__option', attrVal: '5', txt: '5x5' },
             { class: 'menu__option', attrVal: '6', txt: '6x6' },
             { class: 'menu__option', attrVal: '7', txt: '7x7' },
@@ -309,12 +394,12 @@ export default class Menu {
           option: [
             {
               label: { for: 'sound-on' },
-              input: { type: 'radio', id: 'sound-on', name: 'sound', value: false, checked: true },
+              input: { type: 'radio', id: 'sound-on', name: 'sound', value: false,  },
               txt: 'On'
             },
             {
               label: { for: 'sound-off' },
-              input: { type: 'radio', id: 'sound-off', name: 'sound', value: true },
+              input: { type: 'radio', id: 'sound-off', name: 'sound', value: true, checked: true },
               txt: 'Off'
             }
           ]

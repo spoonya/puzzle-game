@@ -1,7 +1,10 @@
-import {header, menu} from './index';
-import {puzzleDOM} from './index';
+import { header, menu } from './index';
+import { puzzleDOM } from './index';
+import Modal from './modal';
 
 export default class PuzzleLogic {
+  public unsolvedNumArr: number[] = [];
+
   public newGame(size: number): void {
     puzzleDOM.boardSize = size;
     puzzleDOM.createPuzzle();
@@ -9,6 +12,20 @@ export default class PuzzleLogic {
     header.resetMoves();
     header.resetTime();
     header.startTime();
+    menu.activateResumeBtn();
+    menu.activateSaveBtn();
+    this.unsolvedNumArr = this.getCurPuzzlesState();
+  }
+
+  public loadGame(obj: object):void {
+    puzzleDOM.createPuzzle(obj);
+    this._addEvtListeners();
+    header.resetMoves(obj);
+    header.resetTime();
+    header.startTime(obj);
+    menu.activateResumeBtn();
+    menu.activateSaveBtn();
+    this.unsolvedNumArr = this.getCurPuzzlesState();
   }
 
   private _move(item: HTMLElement): void {
@@ -31,14 +48,6 @@ export default class PuzzleLogic {
 
       return indexes;
     };
-
-    // const soundMove = () => {
-    //   if (menu.isMute) return;
-
-    //   menu.audio.volume = 0.2;
-    //   menu.audio.src = '../assets/move.mp3';
-    //   menu.audio.play();
-    // };
 
     const chooseAnime = () => {
       let direction;
@@ -124,28 +133,37 @@ export default class PuzzleLogic {
       + Math.abs(coords.itemCoords.row - coords.emptyCoords.row) > 1) {
       return;
     } else {
-      menu.audioSettings.soundOfMove.activate();
       swap(item, empty);
+      menu.audioSettings.soundOfMove.activate();
       header.countMoves();
       this._isSolved() ? this._resetGame() : false;
     }
   }
 
-  private _isSolved(): boolean {
-    const unsolvedNumArr: number[] = [];
+  public getCurPuzzlesState(): number[] {
+    const arr: number[] = [];
+
     puzzleDOM.puzzle.querySelectorAll('div').forEach((el) => {
-      unsolvedNumArr.push(parseInt(el.id));
+      arr.push(parseInt(el.id));
     });
 
-    return JSON.stringify(puzzleDOM.solvedNumArr) === JSON.stringify(unsolvedNumArr);
+    return arr;
+  }
+
+  private _isSolved(): boolean {
+    this.unsolvedNumArr = this.getCurPuzzlesState();
+
+    return JSON.stringify(puzzleDOM.solvedNumArr) === JSON.stringify(this.unsolvedNumArr);
   }
 
   private _resetGame(): void {
+    new Modal(Modal.alertType.onGameEnd).showAlert().closeAlert(7000);
     header.resetMoves();
     header.resetTime();
     header.deactivateMenuBtn();
     puzzleDOM.createInitScreen();
     menu.deactivateResumeBtn();
+    menu.deactivateSaveBtn();
     menu.showMainMenu();
   }
 

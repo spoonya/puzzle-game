@@ -78,20 +78,25 @@ export default class PuzzleDOM {
     }
   }
 
-  public createPuzzle(): void {
+  public createPuzzle(objForLoad?: any): void {
     this._cleanBoard();
 
     this.cellsArr = [];
-
-    this.puzzle.style.gridTemplateColumns = `repeat(${this.boardSize}, 1fr)`;
 
     this.puzzle.classList.add('puzzle');
 
     this._puzzleWrapper?.append(this.puzzle);
 
-    do {
-      this.numArr = this._createRandArray(this.boardSize);
-    } while (!this._isSovlable());
+    if (objForLoad) {
+      this.numArr = objForLoad.numArr;
+      this.boardSize = objForLoad.boardSizeInt;
+    } else {
+      do {
+        this.numArr = this._createRandArray(this.boardSize);
+      } while (!this._isSovlable());
+    }
+
+    this.puzzle.style.gridTemplateColumns = `repeat(${this.boardSize}, 1fr)`;
 
     const arrLength = this.numArr.length;
 

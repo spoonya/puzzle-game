@@ -1,4 +1,4 @@
-import {menu} from './index';
+import { menu } from './index';
 
 export default class Header {
   private _puzzleWrapper: HTMLElement | null = document.querySelector('.puzzle-wrapper');
@@ -11,10 +11,11 @@ export default class Header {
   public headerBtn: HTMLElement = document.createElement('button');
   private _timeText = document.createTextNode('Time: ');
   private _timerInterval: any = 0;
-  private _elapsedTime: number  = 0;
+  public elapsedTime: number  = 0;
   private _startTime: number = 0;
   private _moveText = document.createTextNode('Moves: ');
-  private _movesCount: number = 0;
+  public movesCount: number = 0;
+  public time: string = '';
 
   public createHeader(): void {
     this._header.classList.add('header');
@@ -76,11 +77,19 @@ export default class Header {
     return `${formattedMM}:${formattedSS}`;
   }
 
-  public startTime(): void {
-    this._startTime = Date.now() - this._elapsedTime;
+  public startTime(objForLoad?: any): void {
+    if (objForLoad) {
+      this.elapsedTime = objForLoad.time;
+      console.log(objForLoad.time);
+    }
+
+    this._startTime = Date.now() - this.elapsedTime;
+    console.log(this._startTime);
+
     this._timerInterval = setInterval(() => {
-      this._elapsedTime = Date.now() - this._startTime;
-      this._statsTime.innerText = this._formatTime(this._elapsedTime);
+      this.elapsedTime = Date.now() - this._startTime;
+      this._statsTime.innerText = this._formatTime(this.elapsedTime);
+      this.time = this._statsTime.innerText;
     }, 10);
   }
 
@@ -91,21 +100,25 @@ export default class Header {
   public resetTime(): void {
     clearInterval(this._timerInterval);
     this._statsTime.innerText = '00:00';
-    this._elapsedTime = 0;
+    this.elapsedTime = 0;
   }
 
   public countMoves(): void {
-    this._statsMoves.innerText = (++this._movesCount).toString();
+    this._statsMoves.innerText = (++this.movesCount).toString();
   }
 
-  public resetMoves(): void {
-    this._movesCount = 0;
-    this._statsMoves.innerText = this._movesCount.toString();
+  public resetMoves(objForLoad?: any): void {
+    if (objForLoad) {
+      this.movesCount = objForLoad.moves;
+    } else {
+      this.movesCount = 0;
+    }
+
+    this._statsMoves.innerText = this.movesCount.toString();
   }
 
   private _pauseGame(): void {
     this._pauseTime();
     menu.showMainMenu();
-    menu.activateResumeBtn();
   }
 }

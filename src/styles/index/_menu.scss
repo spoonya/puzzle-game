@@ -147,6 +147,8 @@ label {
   }
 }
 
-.save-load {
+.btn-load {
   @include btn;
+
+  padding: .15em .25em;
 }
