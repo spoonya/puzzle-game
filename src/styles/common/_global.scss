@@ -115,6 +115,10 @@ select {
 }
 
 html {
+  @include media-tablet-ls {
+    font-size: 50%;
+  }
+
   font-size: 62.5%;
 
   scroll-behavior: smooth;
@@ -144,5 +148,5 @@ body {
   max-width: 1200px;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 0 15px;
+  padding: 10px;
 }

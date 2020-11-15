@@ -5,7 +5,7 @@
 }
 
 @mixin media-tablet-ls {
-  @media (max-width: $media-lg) {
+  @media only screen and (max-width: $media-lg) {
     @content;
   }
 }
@@ -28,8 +28,26 @@
   }
 }
 
-@mixin media-custom($width) {
+@mixin media-custom-width($width) {
   @media (max-width: $width) {
+    @content;
+  }
+}
+
+@mixin media-custom-height($width) {
+  @media only screen and (max-width: $width) {
+    @content;
+  }
+}
+
+@mixin  media-custom-width-pt($width) {
+  @media only screen and (max-width: $width) and (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin media-custom-width-ls($width) {
+  @media only screen and (max-width: $width) and (orientation: landscape) {
     @content;
   }
 }

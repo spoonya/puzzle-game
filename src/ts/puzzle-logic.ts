@@ -1,13 +1,18 @@
-import { header, menu } from './index';
-import { puzzleDOM } from './index';
+import {
+  header,
+  menu,
+  puzzleDOM
+} from './index';
 import Modal from './modal';
 
 export default class PuzzleLogic {
   public unsolvedNumArr: number[] = [];
+  private _curSave: any = null;
 
-  public newGame(size: number): void {
+  public newGame(size: number, puzzleStyle: boolean): void {
+    this._curSave = null;
     puzzleDOM.boardSize = size;
-    puzzleDOM.createPuzzle();
+    puzzleDOM.createPuzzle(puzzleStyle);
     this._addEvtListeners();
     header.resetMoves();
     header.resetTime();
@@ -17,8 +22,9 @@ export default class PuzzleLogic {
     this.unsolvedNumArr = this.getCurPuzzlesState();
   }
 
-  public loadGame(obj: object):void {
-    puzzleDOM.createPuzzle(obj);
+  public loadGame(obj: any): void {
+    this._curSave = obj;
+    puzzleDOM.createPuzzle(obj.img === null ? false : true, obj);
     this._addEvtListeners();
     header.resetMoves(obj);
     header.resetTime();
@@ -52,52 +58,64 @@ export default class PuzzleLogic {
     const chooseAnime = () => {
       let direction;
 
-      const toUp = [
-        { transform: 'translateY(-100%)' },
-        { transform: 'translateY(0%)' }
+      const up = [{
+          transform: 'translateY(-100%)'
+        },
+        {
+          transform: 'translateY(0%)'
+        }
       ];
 
-      const toDown = [
-        { transform: 'translateY(100%)' },
-        { transform: 'translateY(0%)' }
+      const down = [{
+          transform: 'translateY(100%)'
+        },
+        {
+          transform: 'translateY(0%)'
+        }
       ];
 
-      const toLeft = [
-        { transform: 'translateX(-100%)' },
-        { transform: 'translateX(0%)' }
+      const left = [{
+          transform: 'translateX(-100%)'
+        },
+        {
+          transform: 'translateX(0%)'
+        }
       ];
 
-      const toRight = [
-        { transform: 'translateX(100%)' },
-        { transform: 'translateX(0%)' }
+      const right = [{
+          transform: 'translateX(100%)'
+        },
+        {
+          transform: 'translateX(0%)'
+        }
       ];
 
-      if (coords.itemCoords.col === coords.emptyCoords.col
-        && coords.itemCoords.row < coords.emptyCoords.row) {
-        direction = toUp;
-      } else if (coords.itemCoords.col === coords.emptyCoords.col
-        && coords.itemCoords.row > coords.emptyCoords.row) {
-        direction = toDown;
-      } else if (coords.itemCoords.col > coords.emptyCoords.col
-        && coords.itemCoords.row === coords.emptyCoords.row) {
-        direction = toRight;
+      if (coords.itemCoords.col === coords.emptyCoords.col &&
+        coords.itemCoords.row < coords.emptyCoords.row) {
+        direction = up;
+      } else if (coords.itemCoords.col === coords.emptyCoords.col &&
+        coords.itemCoords.row > coords.emptyCoords.row) {
+        direction = down;
+      } else if (coords.itemCoords.col > coords.emptyCoords.col &&
+        coords.itemCoords.row === coords.emptyCoords.row) {
+        direction = right;
       } else {
-        direction = toLeft;
+        direction = left;
       }
 
       return direction;
     }
 
-    const swap = (item: HTMLElement, empty: HTMLElement): void => {
+    const swapCells = (item: HTMLElement, empty: HTMLElement, event ? : any): void => {
       const itemParent = item.parentElement;
       const emptyParent = empty.parentElement;
 
       item.animate(
         chooseAnime(), {
-        duration: 200,
-        easing: 'ease-in-out',
-        iterations: 1
-      });
+          duration: 200,
+          easing: 'ease-in-out',
+          iterations: 1
+        });
 
       const itemHolder = document.createElement('div');
       const emptyHolder = document.createElement('div');
@@ -124,17 +142,13 @@ export default class PuzzleLogic {
 
     coords.itemCoords = puzzleDOM.calcCoords(indexes.itemIdx);
     coords.emptyCoords = puzzleDOM.calcCoords(indexes.emptyIdx);
-    // console.log(indexes.itemIdx);
-    // console.log(`item: ${coords.itemCoords.col} ${coords.itemCoords.row}`);
-    // console.log(`empty: ${coords.emptyCoords.col} ${coords.emptyCoords.row}`);
-    // console.log('');
 
-    if (Math.abs(coords.itemCoords.col - coords.emptyCoords.col)
-      + Math.abs(coords.itemCoords.row - coords.emptyCoords.row) > 1) {
+    if (Math.abs(coords.itemCoords.col - coords.emptyCoords.col) +
+      Math.abs(coords.itemCoords.row - coords.emptyCoords.row) > 1) {
       return;
     } else {
-      swap(item, empty);
       menu.audioSettings.soundOfMove.activate();
+      swapCells(item, empty);
       header.countMoves();
       this._isSolved() ? this._resetGame() : false;
     }
@@ -156,15 +170,19 @@ export default class PuzzleLogic {
     return JSON.stringify(puzzleDOM.solvedNumArr) === JSON.stringify(this.unsolvedNumArr);
   }
 
-  private _resetGame(): void {
-    new Modal(Modal.alertType.onGameEnd).showAlert().closeAlert(7000);
+  private _resetGame() {
+    new Modal(Modal.alertType.onGameEnd).showAlert(200).closeAlert(7000);
+    menu.fillRecordsStorage(this._curSave);
     header.resetMoves();
     header.resetTime();
     header.deactivateMenuBtn();
-    puzzleDOM.createInitScreen();
     menu.deactivateResumeBtn();
     menu.deactivateSaveBtn();
-    menu.showMainMenu();
+
+    setTimeout(() => {
+      puzzleDOM.createInitScreen();
+      menu.showMainMenu();
+    }, 7000);
   }
 
   private _addEvtListeners(): void {

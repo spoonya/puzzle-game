@@ -79,12 +79,10 @@ export default class Header {
 
   public startTime(objForLoad?: any): void {
     if (objForLoad) {
-      this.elapsedTime = objForLoad.time;
-      console.log(objForLoad.time);
+      this.elapsedTime = objForLoad.timeInt;
     }
 
     this._startTime = Date.now() - this.elapsedTime;
-    console.log(this._startTime);
 
     this._timerInterval = setInterval(() => {
       this.elapsedTime = Date.now() - this._startTime;

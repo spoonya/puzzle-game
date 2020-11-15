@@ -1,11 +1,18 @@
 .puzzle-wrapper {
   position: relative;
-
-  min-width: 50rem;
-  min-height: 55.6rem;
 }
 
 .puzzle {
+  @include media-smartphone-ls {
+    min-width: 45rem;
+    min-height: 45rem;
+  }
+
+  @include media-smartphone-pt {
+    min-width: 39rem;
+    min-height: 39rem;
+  }
+
   display: grid;
 
   min-width: 50rem;
@@ -15,11 +22,11 @@
   box-shadow: 0 0 3px #000;
 
   grid-auto-rows: 1fr;
-  gap: .2rem;
+  gap: .1rem;
 }
 
 .puzzle__item {
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: 400;
 
   display: flex;

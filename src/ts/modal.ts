@@ -17,6 +17,9 @@ export default class Modal {
     },
     onGameSave: {
       title: 'Game successfully saved!'
+    },
+    onSaveDelete: {
+      title: 'Save successfully deleted!'
     }
   }
 
@@ -32,24 +35,29 @@ export default class Modal {
         this._modalTitle.innerText = Modal.alertType.onGameSave.title;
         break;
 
+      case Modal.alertType.onSaveDelete:
+        this._modalTitle.innerText = Modal.alertType.onSaveDelete.title;
+        break;
+
       default:
         new Error('Wrong alert type');
         break;
     }
   }
 
-  public showAlert(): Modal {
-    this._modalBg.classList.add('modal-bg');
-    this._modal.classList.add('modal');
-    this._modalInner.classList.add('modal__inner');
-    this._modalTitle.classList.add('modal__title');
-    this._modalMsg.classList.add('modal__msg');
+  public showAlert(delay: number = 0): Modal {
+    setTimeout(() => {
+      this._modalBg.classList.add('modal-bg');
+      this._modal.classList.add('modal');
+      this._modalInner.classList.add('modal__inner');
+      this._modalTitle.classList.add('modal__title');
+      this._modalMsg.classList.add('modal__msg');
 
-    this.puzzleWrapper?.append(this._modalBg);
-    this._modalBg.append(this._modal);
-    this._modal.append(this._modalInner);
-    this._modalInner.prepend(this._modalTitle);
-
+      this.puzzleWrapper?.append(this._modalBg);
+      this._modalBg.append(this._modal);
+      this._modal.append(this._modalInner);
+      this._modalInner.prepend(this._modalTitle);
+    }, delay);
     return this;
   }
 
