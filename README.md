@@ -1,1 +1,1 @@
-# gem-puzzle
+# Deploy: https://fifteen-puzzle-game.netlify.app
