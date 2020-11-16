@@ -99,8 +99,6 @@ export default class PuzzleDOM {
 
     this._puzzleWrapper?.append(this.puzzle);
 
-    const imgPart = 100 / (this.boardSize - 1);
-
     if (!objForLoad && puzzleStyle === true) {
       this.img = this._chooseRandImg(1, 150);
     }
@@ -118,6 +116,8 @@ export default class PuzzleDOM {
         this.numArr = this._createRandArray(this.boardSize);
       } while (!this._isSovlable());
     }
+
+    const imgPart = 100 / (this.boardSize - 1);
 
     this.puzzle.style.gridTemplateColumns = `repeat(${this.boardSize}, 1fr)`;
 

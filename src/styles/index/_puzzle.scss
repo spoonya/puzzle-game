@@ -23,6 +23,8 @@
 
   grid-auto-rows: 1fr;
   gap: .1rem;
+
+  animation: fade-in .25s linear;
 }
 
 .puzzle__item {

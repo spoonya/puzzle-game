@@ -130,6 +130,8 @@ body {
 
   margin: 0;
 
+  animation: fade-in .4s linear;
+
   user-select: none;
   letter-spacing: 1px;
 
@@ -149,4 +151,14 @@ body {
   min-height: 100vh;
   margin: 0 auto;
   padding: 10px;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: .1;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
