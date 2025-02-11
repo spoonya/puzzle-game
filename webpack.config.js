@@ -1,8 +1,7 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const ENV = process.env.npm_lifecycle_event;
 const isDev = ENV === 'dev';
@@ -10,9 +9,9 @@ const isProd = ENV === 'build';
 
 function setDevTool() {
   if (isDev) {
-    return 'cheap-module-eval-source-map';
+    return 'eval-cheap-module-source-map';
   } else {
-    return 'none';
+    return false;
   }
 }
 
@@ -26,134 +25,121 @@ function setDMode() {
 
 const config = {
   target: "web",
-  entry: {index: './src/ts/index.ts'},
+  entry: { index: './src/ts/index.ts' },
   resolve: {
     extensions: ['.ts', '.js']
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js'
+    filename: '[name].js',
+    clean: true
   },
   mode: setDMode(),
   devtool: setDevTool(),
   module: {
     rules: [{
-        test: /\.html$/,
-        use: [{
-          loader: 'html-loader',
+      test: /\.html$/,
+      use: [{
+        loader: 'html-loader',
+        options: {
+          minimize: false
+        }
+      }]
+    },
+    {
+      test: /\.ts$/,
+      use: 'ts-loader',
+      exclude: [
+        /node_modules/
+      ]
+    },
+    {
+      test: /\.js$/,
+      use: ['babel-loader'],
+      exclude: [
+        /node_modules/
+      ]
+    },
+    {
+      test: /\.css$/,
+      use: [
+        MiniCssExtractPlugin.loader,
+        {
+          loader: 'css-loader',
           options: {
-            minimize: false
+            sourceMap: true
           }
-        }]
-      },
-      {
-        test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: [
-          /node_modules/
-        ]
-      },
-      {
-        test: /\.js$/,
-        use: ['babel-loader'/* , 'eslint-loader' */],
-        exclude: [
-          /node_modules/
-        ]
-      },
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          }, {
-            loader: 'postcss-loader',
-            options: { sourceMap: true, config: { path: './postcss.config.js' } }
-          }
-        ]
-      },
-      {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true
-            }
-          }, {
-            loader: 'postcss-loader',
-            options: { sourceMap: true, config: { path: './postcss.config.js' } }
-          }, {
-            loader: 'sass-loader',
-            options: {
-              sourceMap: true
-            }
-          }
-        ]
-      },
-      {
-        test: /\.(jpe?g|png|svg|gif)$/,
-        use: [
-          {
-            loader: 'file-loader',
-            options: {
-              outputPath: 'img',
-              name: '[name].[ext]'
-            }},
-          {
-            loader: 'image-webpack-loader',
-            options: {
-              bypassOnDebug : true,
-              mozjpeg: {
-                progressive: true,
-                quality: 75
-              },
-              // optipng.enabled: false will disable optipng
-              optipng: {
-                enabled: false,
-              },
-              pngquant: {
-                quality: [0.65, 0.90],
-                speed: 4
-              },
-              gifsicle: {
-                interlaced: false,
-                optimizationLevel: 1
-              },
-              // the webp option will enable WEBP
-              webp: {
-                quality: 75
-              }
-            }
-          }
-        ]
-      },
-      {
-        test: /\.(woff|woff2|ttf|otf|eot)$/,
-        use: [{
-          loader: 'file-loader',
+        }, {
+          loader: 'postcss-loader',
           options: {
-            outputPath: 'fonts'
+            postcssOptions: {
+              config: path.resolve(__dirname, 'postcss.config.js'),
+            },
+            sourceMap: true
           }
-        }]
-      },
-      {
-        test: /\.(ogg|mp3|wav|mpe?g)$/i,
-        use: [{
-          loader: 'file-loader',
+        }
+      ]
+    },
+    {
+      test: /\.scss$/,
+      use: [
+        MiniCssExtractPlugin.loader,
+        {
+          loader: 'css-loader',
           options: {
-            outputPath: 'assets',
-            name: '[name].[ext]'
+            sourceMap: true
           }
-        }]
+        }, {
+          loader: 'postcss-loader',
+          options: {
+            postcssOptions: {
+              config: path.resolve(__dirname, 'postcss.config.js'),
+            },
+            sourceMap: true
+          }
+        }, {
+          loader: 'sass-loader',
+          options: {
+            sourceMap: true
+          }
+        }
+      ]
+    },
+    {
+      test: /\.(jpe?g|png|svg|gif)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'img/[name][ext]'
       }
+    },
+    {
+      test: /\.(woff|woff2|ttf|otf|eot)$/,
+      type: 'asset/resource',
+      generator: {
+        filename: 'fonts/[name][ext]'
+      }
+    },
+    {
+      test: /\.(ogg|mp3|wav|mpe?g)$/i,
+      type: 'asset/resource',
+      generator: {
+        filename: 'assets/[name][ext]'
+      }
+    }
     ]
+  },
+
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          format: {
+            comments: false,
+          },
+        },
+        extractComments: false,
+      }),
+    ],
   },
 
   plugins: [
@@ -164,26 +150,26 @@ const config = {
       template: './src/index.html',
       filename: './index.html'
     }),
-    new CopyWebpackPlugin([
-      // {from: './src/static', to: './'},
-      // {from: './src/img', to: './img/'},
-    ]),
   ],
 
   devServer: {
-    contentBase: path.join(__dirname, 'dist'),
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
     compress: true,
     port: 3000,
-    overlay: true,
-    stats: 'errors-only',
-    clientLogLevel: 'none'
+    hot: true,
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
+      progress: true,
+    },
+    devMiddleware: {
+      stats: 'minimal',
+    }
   }
 }
-
-if (isProd) {
-  config.plugins.push(
-    new UglifyJSPlugin()
-  );
-};
 
 module.exports = config;
