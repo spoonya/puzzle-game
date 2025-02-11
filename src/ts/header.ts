@@ -1,4 +1,4 @@
-import { menu } from './index';
+import { menu } from "./index";
 
 export default class Header {
   private _puzzleWrapper: HTMLElement | null =

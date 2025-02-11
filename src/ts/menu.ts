@@ -1,5 +1,5 @@
-import { header, puzzleDOM, puzzleLogic } from './index';
-import Modal from './modal';
+import { header, puzzleDOM, puzzleLogic } from "./index";
+import Modal from "./modal";
 
 export default class Menu {
   private _puzzleWrapper: HTMLElement | null =

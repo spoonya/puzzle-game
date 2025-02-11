@@ -52,13 +52,13 @@ input {
   background: none;
 }
 
-input[type='button'] {
+input[type="button"] {
   padding: 0;
 
   cursor: pointer;
 }
 
-input[type='radio'] {
+input[type="radio"] {
   font-size: 1.6rem;
   line-height: 20px;
 
@@ -97,7 +97,7 @@ select {
 
   cursor: pointer;
   -webkit-user-select: none;
-     -moz-user-select: none;
+  -moz-user-select: none;
   white-space: nowrap;
   text-overflow: ellipsis;
 
@@ -105,13 +105,13 @@ select {
   border: 1px solid #aaa;
   border-radius: 2px;
   outline: none;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 
   -moz-appearance: button;
   -webkit-padding-end: 20px;
-     -moz-padding-end: 20px;
+  -moz-padding-end: 20px;
   -webkit-padding-start: 2px;
-     -moz-padding-start: 2px;
+  -moz-padding-start: 2px;
 }
 
 html {
@@ -130,7 +130,7 @@ body {
 
   margin: 0;
 
-  animation: fade-in .4s linear;
+  animation: fade-in 0.4s linear;
 
   user-select: none;
   letter-spacing: 1px;
@@ -155,7 +155,7 @@ body {
 
 @keyframes fade-in {
   0% {
-    opacity: .1;
+    opacity: 0.1;
   }
 
   100% {

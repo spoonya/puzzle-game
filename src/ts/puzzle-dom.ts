@@ -120,7 +120,7 @@ export default class PuzzleDOM {
     this._puzzleWrapper?.append(this.puzzle);
 
     if (!objForLoad && puzzleStyle === true) {
-      this.img = this._chooseRandImg(1, 150);
+      this.img = this._chooseRandImg(1, 32);
       this._createPreview();
     }
 
