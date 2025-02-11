@@ -22,9 +22,9 @@
   box-shadow: 0 0 3px #000;
 
   grid-auto-rows: 1fr;
-  gap: .1rem;
+  gap: 0.1rem;
 
-  animation: fade-in .25s linear;
+  animation: fade-in 0.25s linear;
 }
 
 .puzzle__item {
@@ -36,7 +36,7 @@
   justify-content: center;
 
   cursor: pointer;
-  transition: transform .1s linear, background-color .1s linear;
+  transition: transform 0.1s linear, background-color 0.1s linear;
 
   color: $color-primary-light;
   background-color: $color-secondary-dark;
@@ -52,4 +52,16 @@
   &:hover {
     background-color: lighten($color-secondary-dark, 10);
   }
+}
+
+.puzzle-preview {
+  display: none;
+  width: 150px;
+  height: 150px;
+  margin: 10px auto;
+  border: 2px solid #333;
+  border-radius: 5px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
